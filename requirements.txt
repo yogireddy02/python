@@ -18,11 +18,11 @@ langchain-anthropic            # Claude integration for LangChain
 langchain-community           # community tools + utilities
 
 # ── Data validation ───────────────────────────────────────────────────────────
-pydantic==2.7.1               # data models + validation
-pydantic[email]==2.7.1        # email validation support
+pydantic>=2.11               # data models + validation
 
 # ── Database ─────────────────────────────────────────────────────────────────
-psycopg2-binary==2.9.9        # sync PostgreSQL driver (seed_db.py, legacy)
+#psycopg2-binary==2.9.9        # sync PostgreSQL driver (seed_db.py, legacy)
+psycopg2-binary
 asyncpg                       # async PostgreSQL driver (NLQ agent — non-blocking)
 
 # ── Async ─────────────────────────────────────────────────────────────────────
