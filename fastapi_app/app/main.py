@@ -18,24 +18,12 @@ block right below makes that work — see the comment there for why it's needed.
 # it hands off to uvicorn using the proper package path and stops this script —
 # so the relative imports are only ever reached in the correct package context.
 # ---------------------------------------------------------------------------
-if __name__ == "__main__" and (__package__ is None or __package__ == ""):
-    import os, sys, uvicorn
-    # add the PARENT of the app/ folder to the path, so "app" is importable as a package
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    # Pass the app as an IMPORT STRING ("app.main:app") so uvicorn imports it as a
-    # package — that's what makes the relative imports below work.
-    # NOTE: reload=False here on purpose. The auto-reloader re-runs this file by
-    # PATH in a child process, which would re-trigger the relative-import error.
-    # For live reload while developing, use the terminal instead:
-    #     uvicorn app.main:app --reload
-    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=False)
-    sys.exit(0)
-
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
 from .routers import products, reviews
 from .middleware import TimingMiddleware, AuthMiddleware
+
 
 # The title/description/version below become the Swagger documentation header.
 # docs_url=None / redoc_url=None turns OFF the built-in (CDN-based) docs pages —

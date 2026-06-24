@@ -8,7 +8,7 @@ Two ideas here:
      OpenAI on Day 09, now produced by YOUR server.
 """
 import asyncio, json
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header
 from fastapi.responses import StreamingResponse
 from .. import database as db
 from .. import llm
@@ -18,7 +18,7 @@ router = APIRouter(tags=["Reviews"])
 
 
 @router.get("/products/{product_id}/reviews", response_model=list[ReviewOut])
-def list_reviews(product_id: int):
+def list_reviews(product_id: int,x_api_key: str = Header(...)):
     """All reviews for one product."""
     if db.get_product(product_id) is None:
         raise HTTPException(status_code=404, detail=f"Product {product_id} not found")
@@ -26,7 +26,7 @@ def list_reviews(product_id: int):
 
 
 @router.post("/products/{product_id}/reviews", response_model=ReviewOut, status_code=201)
-async def add_review(product_id: int, review: ReviewIn):
+async def add_review(product_id: int, review: ReviewIn,x_api_key: str = Header(...)):
     """
     Add a review (rating 1-5, enforced by the contract). This also PUSHES the new
     review to every client currently listening on the SSE stream below.
@@ -37,7 +37,7 @@ async def add_review(product_id: int, review: ReviewIn):
 
 
 @router.get("/reviews/stream")
-async def stream_reviews():
+async def stream_reviews(x_api_key: str = Header(...)):
     """
     SSE live feed. Open this in one terminal:
         curl -N http://localhost:8000/reviews/stream
@@ -64,7 +64,7 @@ async def stream_reviews():
 
 
 @router.get("/products/{product_id}/reviews/summary")
-async def summarise_reviews(product_id: int):
+async def summarise_reviews(product_id: int,x_api_key: str = Header(...)):
     """
     AI-generated summary of a product's reviews, STREAMED over SSE.
 
