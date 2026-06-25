@@ -59,6 +59,7 @@ async def stream_summary(product_name: str, reviews: list[dict]):
         # client.stream(...) keeps the connection open and lets us read line by line
         async with client.stream("POST", OPENAI_URL, json=payload, headers=headers) as resp:
             async for line in resp.aiter_lines():     # Day 10: async for over a stream
+                print(line)
                 if not line.startswith("data: "):
                     continue
                 data = line[len("data: "):]

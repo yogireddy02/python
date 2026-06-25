@@ -85,10 +85,12 @@ async def summarise_reviews(product_id: int,x_api_key: str = Header(...)):
     reviews = db.get_reviews(product_id)
 
     async def event_stream():
+        final_string = ""
         # stream each text piece from the LLM as its own SSE 'data:' line
         async for piece in llm.stream_summary(product["name"], reviews):
+            final_string = final_string + piece
             yield f"data: {json.dumps({'text': piece})}\n\n"
         # a final marker so the client knows the summary is complete
-        yield "event: done\ndata: end\n\n"
+        yield f"event: done\ndata: {final_string}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
